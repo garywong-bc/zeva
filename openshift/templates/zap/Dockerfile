@@ -1,0 +1,1 @@
+FROM owasp/zap2docker-stable:2.9.0

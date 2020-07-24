@@ -1,0 +1,63 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: zap
+parameters:
+  - name: GIT_REF
+    displayName:
+    description: 
+    required: true
+objects:
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      description: Keeps track of changes in zap image
+    labels:
+      shared: "true"
+    creationTimestamp: null
+    generation: 643
+    name: zap
+  spec:
+    lookupPolicy:
+      local: false
+  status:
+    dockerImageRepository: ""
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    creationTimestamp: null
+    name: zap
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: zap:latest
+    postCommit: {}
+    resources:
+      limits:
+        cpu: 2000m
+        memory: 2G
+      requests:
+        cpu: 500m
+        memory: 200M
+    runPolicy: Serial
+    source:
+      git:
+        ref: ${GIT_REF}
+        uri: https://github.com/bcgov/zeva.git
+      type: Git
+      contextDir: openshift/templates/zap
+    strategy:
+      dockerStrategy:
+        forcePull: false
+        noCache: true
+        imageOptimizationPolicy: SkipLayers
+      type: Docker
+    successfulBuildsHistoryLimit: 5
+    triggers: []
+  status:
+    lastVersion: 0
